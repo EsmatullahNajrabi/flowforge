@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlowForge — Visual AI Workflow Builder</title>
+  
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Drawflow CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.css">
+  
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar navbar-expand-lg border-bottom bg-body-tertiary shadow-sm">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#">
+        <div class="bg-primary rounded px-2 py-1 text-white"><i class="fa-solid fa-network-wired"></i></div>
+        <span>Flow<span class="text-primary">Forge</span></span>
+      </a>
+      
+      <div class="d-flex gap-2">
+        <select class="form-select form-select-sm" id="templateSelector" style="width: 200px;">
+          <option value="empty">Empty Canvas</option>
+          <option value="youtube">Auto-respond YouTube</option>
+          <option value="email">Summarize Emails</option>
+        </select>
+        <button class="btn btn-outline-secondary btn-sm" id="exportBtn">
+          <i class="fa-solid fa-code me-1"></i> Export JSON
+        </button>
+        <button class="btn btn-success btn-sm px-4 fw-bold" id="runBtn">
+          <i class="fa-solid fa-play me-1"></i> Run Workflow
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="d-flex main-container">
+    <!-- Left Sidebar: Nodes Palette -->
+    <div class="sidebar border-end bg-body-tertiary p-3">
+      <h6 class="text-secondary fw-bold mb-3 text-uppercase fs-7">Nodes</h6>
+      
+      <div class="drag-drawflow text-white bg-danger mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="trigger">
+        <i class="fa-solid fa-bolt w-20px"></i> Trigger (Webhook)
+      </div>
+      
+      <div class="drag-drawflow text-white bg-primary mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="ai">
+        <i class="fa-solid fa-brain w-20px"></i> AI Prompt (LLM)
+      </div>
+      
+      <div class="drag-drawflow text-white bg-warning text-dark mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="condition">
+        <i class="fa-solid fa-code-branch w-20px"></i> Condition (If/Else)
+      </div>
+      
+      <div class="drag-drawflow text-white bg-info text-dark mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="transform">
+        <i class="fa-solid fa-filter w-20px"></i> Data Transform
+      </div>
+      
+      <div class="drag-drawflow text-white bg-success mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="output">
+        <i class="fa-solid fa-paper-plane w-20px"></i> Output Action
+      </div>
+    </div>
+
+    <!-- Center Canvas -->
+    <div class="flex-grow-1 position-relative">
+      <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+      
+      <!-- Execution Log Panel (Hidden by default, slides up on Run) -->
+      <div id="logPanel" class="position-absolute bottom-0 start-0 w-100 bg-dark text-light p-3 border-top" style="display: none; max-height: 200px; overflow-y: auto; z-index: 10;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h6 class="mb-0 text-success fw-bold"><i class="fa-solid fa-terminal me-2"></i>Execution Logs</h6>
+          <button class="btn btn-sm btn-outline-light py-0" id="closeLogBtn"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <ul id="logList" class="list-unstyled mb-0 font-monospace small"></ul>
+      </div>
+    </div>
+
+    <!-- Right Sidebar: Configuration -->
+    <div class="config-panel border-start bg-body-tertiary p-3" id="configPanel">
+      <div class="text-center text-secondary mt-5" id="noNodeSelected">
+        <i class="fa-solid fa-mouse-pointer fs-1 mb-3"></i>
+        <p>Click a node to configure it</p>
+      </div>
+      
+      <div id="nodeSettings" style="display: none;">
+        <h6 class="fw-bold border-bottom pb-2 mb-3" id="configTitle">Configure Node</h6>
+        <div class="mb-3">
+          <label class="form-label small text-secondary">Node Name</label>
+          <input type="text" class="form-control form-control-sm bg-body" id="nodeNameInput">
+        </div>
+        <div class="mb-3">
+          <label class="form-label small text-secondary">Parameters / Prompt</label>
+          <textarea class="form-control form-control-sm bg-body" rows="4" placeholder="Enter instructions or JSON..."></textarea>
+        </div>
+        <button class="btn btn-primary btn-sm w-100" id="saveConfigBtn">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export JSON Modal -->
+  <div class="modal fade" id="exportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title"><i class="fa-solid fa-code text-primary me-2"></i>Workflow JSON Export</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <pre><code id="jsonOutput" class="text-success small"></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
+  <script src="./templates.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
