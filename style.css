@@ -1,148 +1,174 @@
 :root {
-    --bg-gradient: #121212;
+    --bg-dark: #0a0a0f;
+    --primary: #00E5FF;
+    --primary-glow: rgba(0, 229, 255, 0.6);
+    --secondary: #7000FF;
+    --glass: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 body {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+    margin: 0;
+    background-color: var(--bg-dark);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
     overflow: hidden;
-    background-color: var(--bg-gradient);
+    cursor: none;
 }
 
-.main-container {
-    height: calc(100vh - 56px);
-    /* Minus navbar */
+/* Custom Cursor */
+#cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
 }
 
-.sidebar {
-    width: 250px;
-    overflow-y: auto;
-}
-
-.config-panel {
+#cursor-blur {
+    position: fixed;
     width: 300px;
-    overflow-y: auto;
-    transition: all 0.3s ease;
+    height: 300px;
+    background: var(--secondary);
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+    opacity: 0.3;
+    transition: all 0.2s;
 }
 
-#drawflow {
+/* Background 3D Scene */
+.spline-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+/* Glass Panels */
+.glass-panel {
+    background: var(--glass);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    transform-style: preserve-3d;
+    z-index: 10;
+}
+
+.holographic-bg {
+    background: linear-gradient(135deg, rgba(112, 0, 255, 0.1), rgba(0, 229, 255, 0.1));
+}
+
+.pop-out {
+    transform: translateZ(30px);
+    transition: transform 0.3s ease;
+}
+
+/* Navigation & Inputs */
+.glass-btn {
+    background: transparent;
+    color: #aaa !important;
+    border-radius: 12px !important;
+    margin-bottom: 5px;
+    border: 1px solid transparent;
+    transition: 0.3s;
+}
+
+.glass-btn.active,
+.glass-btn:hover {
+    background: rgba(0, 229, 255, 0.1) !important;
+    color: #fff !important;
+    border-color: var(--primary-glow);
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+}
+
+.glass-input {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: white !important;
+    padding: 12px 15px;
+    border-radius: 12px;
+}
+
+.glass-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 15px var(--primary-glow) !important;
+}
+
+/* Glowing Buttons */
+.btn-glow {
+    background: transparent;
+    color: #fff;
+    border: 1px solid var(--primary);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, #333 1px, transparent 1px);
-    background-size: 20px 20px;
-    /* Dotted background */
-    background-color: #1a1a1a;
+    background: var(--primary);
+    z-index: -1;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
 }
 
-.cursor-grab {
-    cursor: grab;
+.btn-glow:hover::before {
+    transform: scaleX(1);
 }
 
-.w-20px {
-    width: 25px;
-    text-align: center;
-}
-
-/* Customizing Drawflow Nodes */
-.drawflow .drawflow-node {
-    background: #2b2b2b;
-    border: 1px solid #444;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    color: #fff;
-    padding: 0;
-    width: 220px;
-}
-
-.drawflow .drawflow-node.selected {
-    border: 2px solid #6366f1;
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
-}
-
-.node-header {
-    padding: 10px;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
+.btn-glow:hover {
+    color: #000;
     font-weight: bold;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    box-shadow: 0 0 20px var(--primary-glow);
 }
 
-.node-content {
-    padding: 15px 10px;
-    font-size: 12px;
-    color: #aaa;
+/* Kanban Board Styles */
+.glass-column {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px dashed var(--glass-border);
+    min-height: 60vh;
 }
 
-/* Node Colors */
-.drawflow-node.trigger .node-header {
-    background: #dc3545;
-    color: white;
+.kanban-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 15px;
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+    backdrop-filter: blur(10px);
 }
 
-.drawflow-node.ai .node-header {
-    background: #0d6efd;
-    color: white;
+.kanban-card:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+    opacity: 0.8;
 }
 
-.drawflow-node.condition .node-header {
-    background: #ffc107;
-    color: black;
+.kanban-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
 }
 
-.drawflow-node.transform .node-header {
-    background: #0dcaf0;
-    color: black;
-}
-
-.drawflow-node.output .node-header {
-    background: #198754;
-    color: white;
-}
-
-/* Connection Lines */
-.drawflow .connection .main-path {
-    stroke: #666;
-    stroke-width: 3px;
-}
-
-/* Execution Animation */
-@keyframes pulseGlow {
-    0% {
-        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
-        border-color: #0d6efd;
-        transform: scale(1);
-    }
-
-    50% {
-        box-shadow: 0 0 20px 10px rgba(13, 110, 253, 0);
-        border-color: #0dcaf0;
-        transform: scale(1.02);
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
-        border-color: #444;
-        transform: scale(1);
-    }
-}
-
-.node-executing {
-    animation: pulseGlow 1.5s ease-out forwards;
-}
-
-.drawflow .connection.line-executing .main-path {
-    stroke: #0d6efd !important;
-    stroke-width: 4px;
-    animation: dash 1s linear forwards;
-    stroke-dasharray: 10;
-}
-
-@keyframes dash {
-    to {
-        stroke-dashoffset: -20;
-    }
+/* Utility */
+.avatar-glow {
+    box-shadow: 0 0 20px var(--secondary);
+    border: 2px solid var(--primary);
 }

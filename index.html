@@ -1,117 +1,181 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FlowForge — Visual AI Workflow Builder</title>
+  <title>BrandDeck | Spatial AI CRM 2026</title>
   
-  <!-- Bootstrap 5 -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- FontAwesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-  <!-- Drawflow CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.css">
-  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
-  <!-- Top Navigation -->
-  <nav class="navbar navbar-expand-lg border-bottom bg-body-tertiary shadow-sm">
-    <div class="container-fluid px-4">
-      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#">
-        <div class="bg-primary rounded px-2 py-1 text-white"><i class="fa-solid fa-network-wired"></i></div>
-        <span>Flow<span class="text-primary">Forge</span></span>
-      </a>
-      
-      <div class="d-flex gap-2">
-        <select class="form-select form-select-sm" id="templateSelector" style="width: 200px;">
-          <option value="empty">Empty Canvas</option>
-          <option value="youtube">Auto-respond YouTube</option>
-          <option value="email">Summarize Emails</option>
-        </select>
-        <button class="btn btn-outline-secondary btn-sm" id="exportBtn">
-          <i class="fa-solid fa-code me-1"></i> Export JSON
-        </button>
-        <button class="btn btn-success btn-sm px-4 fw-bold" id="runBtn">
-          <i class="fa-solid fa-play me-1"></i> Run Workflow
-        </button>
-      </div>
-    </div>
-  </nav>
+  <!-- Custom AI Cursor -->
+  <div id="cursor"></div>
+  <div id="cursor-blur"></div>
 
-  <div class="d-flex main-container">
-    <!-- Left Sidebar: Nodes Palette -->
-    <div class="sidebar border-end bg-body-tertiary p-3">
-      <h6 class="text-secondary fw-bold mb-3 text-uppercase fs-7">Nodes</h6>
-      
-      <div class="drag-drawflow text-white bg-danger mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="trigger">
-        <i class="fa-solid fa-bolt w-20px"></i> Trigger (Webhook)
-      </div>
-      
-      <div class="drag-drawflow text-white bg-primary mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="ai">
-        <i class="fa-solid fa-brain w-20px"></i> AI Prompt (LLM)
-      </div>
-      
-      <div class="drag-drawflow text-white bg-warning text-dark mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="condition">
-        <i class="fa-solid fa-code-branch w-20px"></i> Condition (If/Else)
-      </div>
-      
-      <div class="drag-drawflow text-white bg-info text-dark mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="transform">
-        <i class="fa-solid fa-filter w-20px"></i> Data Transform
-      </div>
-      
-      <div class="drag-drawflow text-white bg-success mb-2 p-2 rounded cursor-grab shadow-sm" draggable="true" ondragstart="drag(event)" data-node="output">
-        <i class="fa-solid fa-paper-plane w-20px"></i> Output Action
-      </div>
-    </div>
-
-    <!-- Center Canvas -->
-    <div class="flex-grow-1 position-relative">
-      <div id="drawflow" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-      
-      <!-- Execution Log Panel (Hidden by default, slides up on Run) -->
-      <div id="logPanel" class="position-absolute bottom-0 start-0 w-100 bg-dark text-light p-3 border-top" style="display: none; max-height: 200px; overflow-y: auto; z-index: 10;">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h6 class="mb-0 text-success fw-bold"><i class="fa-solid fa-terminal me-2"></i>Execution Logs</h6>
-          <button class="btn btn-sm btn-outline-light py-0" id="closeLogBtn"><i class="fa-solid fa-times"></i></button>
-        </div>
-        <ul id="logList" class="list-unstyled mb-0 font-monospace small"></ul>
-      </div>
-    </div>
-
-    <!-- Right Sidebar: Configuration -->
-    <div class="config-panel border-start bg-body-tertiary p-3" id="configPanel">
-      <div class="text-center text-secondary mt-5" id="noNodeSelected">
-        <i class="fa-solid fa-mouse-pointer fs-1 mb-3"></i>
-        <p>Click a node to configure it</p>
-      </div>
-      
-      <div id="nodeSettings" style="display: none;">
-        <h6 class="fw-bold border-bottom pb-2 mb-3" id="configTitle">Configure Node</h6>
-        <div class="mb-3">
-          <label class="form-label small text-secondary">Node Name</label>
-          <input type="text" class="form-control form-control-sm bg-body" id="nodeNameInput">
-        </div>
-        <div class="mb-3">
-          <label class="form-label small text-secondary">Parameters / Prompt</label>
-          <textarea class="form-control form-control-sm bg-body" rows="4" placeholder="Enter instructions or JSON..."></textarea>
-        </div>
-        <button class="btn btn-primary btn-sm w-100" id="saveConfigBtn">Save Configuration</button>
-      </div>
-    </div>
+  <!-- 3D Abstract Data Background -->
+  <div class="spline-container">
+    <spline-viewer url="https://prod.spline.design/qZ7K0gLfwP-3rO0l/scene.splinecode"></spline-viewer>
   </div>
 
-  <!-- Export JSON Modal -->
-  <div class="modal fade" id="exportModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content bg-dark text-light">
-        <div class="modal-header border-secondary">
-          <h5 class="modal-title"><i class="fa-solid fa-code text-primary me-2"></i>Workflow JSON Export</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  <div class="container-fluid h-100 p-4">
+    <div class="row h-100 g-4">
+      
+      <!-- Glass Sidebar Navigation -->
+      <div class="col-xl-2 col-lg-3">
+        <div class="glass-panel h-100 p-4 d-flex flex-column rounded-4" data-tilt data-tilt-max="2" data-tilt-glare data-tilt-max-glare="0.1">
+          <h3 class="fw-bold text-white mb-5 d-flex align-items-center gap-2 pop-out">
+            <i class="fa-solid fa-layer-group text-primary"></i> BrandDeck
+          </h3>
+          <div class="nav flex-column nav-pills gap-3" id="v-pills-tab" role="tablist">
+            <button class="nav-link active glass-btn text-start pop-out" data-bs-toggle="pill" data-bs-target="#calculator" type="button"><i class="fa-solid fa-calculator me-2"></i> AI Calculator</button>
+            <button class="nav-link glass-btn text-start pop-out" data-bs-toggle="pill" data-bs-target="#pipeline" type="button"><i class="fa-solid fa-kanban me-2"></i> Deal Pipeline</button>
+            <button class="nav-link glass-btn text-start pop-out" data-bs-toggle="pill" data-bs-target="#templates" type="button"><i class="fa-solid fa-copy me-2"></i> Templates</button>
+            <button class="nav-link glass-btn text-start pop-out" data-bs-toggle="pill" data-bs-target="#mediakit" type="button"><i class="fa-solid fa-id-card me-2"></i> Media Kit</button>
+          </div>
+          
+          <div class="mt-auto pt-4 border-top border-secondary opacity-75">
+            <div class="d-flex align-items-center gap-3">
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop" class="rounded-circle avatar-glow" width="45">
+              <div><h6 class="text-white mb-0">Alex Dev</h6><small class="text-primary">Pro Plan</small></div>
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
-          <pre><code id="jsonOutput" class="text-success small"></code></pre>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="col-xl-10 col-lg-9 h-100">
+        <div class="tab-content h-100" id="v-pills-tabContent">
+          
+          <!-- TAB 1: AI Calculator & Dashboard -->
+          <div class="tab-pane fade show active h-100" id="calculator" role="tabpanel">
+            <div class="row g-4 mb-4">
+              <!-- Revenue Chart -->
+              <div class="col-lg-8 gsap-anim">
+                <div class="glass-panel p-4 rounded-4">
+                  <div class="d-flex justify-content-between mb-4">
+                    <h5 class="text-white fw-bold">Revenue Trajectory (6 Months)</h5>
+                    <span class="badge bg-primary bg-opacity-25 text-primary border border-primary px-3 py-2 rounded-pill">+24% Growth</span>
+                  </div>
+                  <canvas id="revenueChart" height="100"></canvas>
+                </div>
+              </div>
+              <!-- Benchmark Strip -->
+              <div class="col-lg-4 gsap-anim">
+                <div class="glass-panel p-4 rounded-4 h-100 d-flex flex-column justify-content-center text-center holographic-bg">
+                  <i class="fa-solid fa-robot fs-1 text-primary mb-3 pop-out"></i>
+                  <h6 class="text-white pop-out">AI Market Benchmark</h6>
+                  <p class="text-secondary small pop-out">Tech channels (100K-200K) average $4k-$7k per dedicated integration this quarter.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculator Section -->
+            <div class="glass-panel p-5 rounded-4 gsap-anim">
+              <h3 class="text-white fw-bold mb-4">Sponsorship Rate Engine</h3>
+              <form id="calcForm" class="row g-4 mb-5">
+                <div class="col-md-3">
+                  <label class="text-secondary small mb-1">Subscribers</label>
+                  <input type="number" id="inpSubs" class="form-control glass-input" value="150000">
+                </div>
+                <div class="col-md-3">
+                  <label class="text-secondary small mb-1">Avg Views (30 Days)</label>
+                  <input type="number" id="inpViews" class="form-control glass-input" value="65000">
+                </div>
+                <div class="col-md-3">
+                  <label class="text-secondary small mb-1">Engagement Rate (%)</label>
+                  <input type="number" id="inpEng" class="form-control glass-input" value="7.5">
+                </div>
+                <div class="col-md-3">
+                  <label class="text-secondary small mb-1">Content Niche</label>
+                  <select id="inpNiche" class="form-select glass-input text-white">
+                    <option value="tech" selected>Technology & AI</option>
+                    <option value="finance">Finance & Crypto</option>
+                    <option value="lifestyle">Lifestyle & Vlog</option>
+                  </select>
+                </div>
+                <div class="col-12 text-end">
+                  <button type="submit" class="btn btn-glow rounded-pill px-5 py-2 fw-bold">Calculate Market Rate</button>
+                </div>
+              </form>
+
+              <!-- Results 3D Grid -->
+              <div class="row g-4 d-none" id="resultGrid">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Kanban Pipeline -->
+          <div class="tab-pane fade h-100" id="pipeline" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-4 gsap-anim">
+              <h2 class="text-white fw-bold">Active Deals</h2>
+              <button class="btn btn-glow rounded-pill px-4"><i class="fa-solid fa-plus me-2"></i>New Deal</button>
+            </div>
+            
+            <div class="row g-4 h-100 kanban-board gsap-anim">
+              <!-- Prospecting -->
+              <div class="col-md-3">
+                <div class="glass-column p-3 rounded-4 h-100" id="prospecting" ondrop="drop(event)" ondragover="allowDrop(event)">
+                  <h6 class="text-secondary fw-bold mb-3"><i class="fa-solid fa-magnifying-glass text-info me-2"></i>Prospecting</h6>
+                  <!-- Cards injected via JS -->
+                </div>
+              </div>
+              <!-- Pitched -->
+              <div class="col-md-3">
+                <div class="glass-column p-3 rounded-4 h-100" id="pitched" ondrop="drop(event)" ondragover="allowDrop(event)">
+                  <h6 class="text-secondary fw-bold mb-3"><i class="fa-solid fa-paper-plane text-warning me-2"></i>Pitched</h6>
+                </div>
+              </div>
+              <!-- Negotiating -->
+              <div class="col-md-3">
+                <div class="glass-column p-3 rounded-4 h-100" id="negotiating" ondrop="drop(event)" ondragover="allowDrop(event)">
+                  <h6 class="text-secondary fw-bold mb-3"><i class="fa-solid fa-comments text-primary me-2"></i>Negotiating</h6>
+                </div>
+              </div>
+              <!-- Closed -->
+              <div class="col-md-3">
+                <div class="glass-column p-3 rounded-4 h-100" id="closed" ondrop="drop(event)" ondragover="allowDrop(event)">
+                  <h6 class="text-secondary fw-bold mb-3"><i class="fa-solid fa-check-circle text-success me-2"></i>Closed / Paid</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Templates -->
+          <div class="tab-pane fade h-100" id="templates" role="tabpanel">
+            <h2 class="text-white fw-bold mb-4 gsap-anim">Negotiation Scripts</h2>
+            <div class="row g-4" id="templateGrid">
+               <!-- Injected via JS -->
+            </div>
+          </div>
+
+          <!-- TAB 4: Media Kit (Print Friendly) -->
+          <div class="tab-pane fade h-100" id="mediakit" role="tabpanel">
+            <div class="glass-panel p-5 rounded-4 mx-auto mt-4 text-center position-relative gsap-anim" style="max-width: 800px;">
+              <button class="btn btn-outline-light rounded-pill position-absolute top-0 end-0 m-4"><i class="fa-solid fa-link me-2"></i>Copy Link</button>
+              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" class="rounded-circle avatar-glow mb-4" width="100">
+              <h1 class="display-4 fw-bold text-white mb-2">Alex Dev</h1>
+              <p class="text-primary fw-bold fs-5 mb-5">Tech, Code & AI</p>
+              
+              <div class="row g-4 mb-5 text-center">
+                <div class="col-4 border-end border-secondary"><h2 class="text-white mb-0">150K</h2><small class="text-secondary">Subscribers</small></div>
+                <div class="col-4 border-end border-secondary"><h2 class="text-white mb-0">65K</h2><small class="text-secondary">Avg Views</small></div>
+                <div class="col-4"><h2 class="text-white mb-0">7.5%</h2><small class="text-secondary">Engagement</small></div>
+              </div>
+              
+              <h5 class="text-secondary mb-4">Past Partners</h5>
+              <div class="d-flex justify-content-center gap-4 opacity-50 mb-5">
+                <i class="fa-brands fa-aws fs-1"></i> <i class="fa-brands fa-google fs-1"></i> <i class="fa-brands fa-stripe fs-1"></i>
+              </div>
+              <button class="btn btn-glow rounded-pill px-5 py-3 fs-5">Download Full Kit (PDF)</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -119,8 +183,11 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/jerosoler/Drawflow/dist/drawflow.min.js"></script>
-  <script src="./templates.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.94/build/spline-viewer.js"></script>
+  
+  <script src="./data.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
